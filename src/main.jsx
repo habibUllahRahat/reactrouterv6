@@ -5,6 +5,8 @@ import {
 	RouterProvider,
 } from "react-router-dom"
 import "./index.css"
+import { getContactsLoader } from "./loaders/contactsLoaders"
+import { createContactAction } from "./actions/actions"
 import Contact from "./routes/contact"
 import ErrorPage from "./routes/error-page"
 import Root from "./routes/root"
@@ -58,12 +60,53 @@ const router = createBrowserRouter([
  * * For This we need o replace <a> tag with React Router DOM's <Link/> tag at src/routes/root.jsx and replace href={`/contacts/1`} with to={`/contacts/1`} cause fro Link component we have to set the path where it will be called usin 'to={link}' attribute
 * * Now we have to import <Link/> from React Router DOM at src/routes/root.jsx and replace <a> tag with <Link>
 * * Now we can see that when we click on Linked tag it will not reload the page
- */
 const router = createBrowserRouter([
 	{
 		path: "/",
 		element: <Root />,
 		errorElement: <ErrorPage />,
+		children: [
+			{
+				path: "/contacts/:contactId",
+				element: <Contact />,
+				errorElement: <ErrorPage />,
+			},
+		],
+	},
+	,
+])
+ */
+
+//! Loaders
+/**
+ * ! When land on a page we might need to get data from an API or database for React Router DOM we have to use loaders
+ * * For this we need to make some function for each page and set it as a loader at src/routes/root.jsx
+** Now we have to import getContactsLoader from src/loaders/contactsLoaders.js and set it as a 'loader' key value pair `loader:getContactsLoader,`
+** for use this loimport Root from './routes/root';
+**loader data we need use `useLoaderData()` from `React Router DOM`, this will return the data which we get from loader. 'const contacts = useLoaderData();' at src/routes/root.jsx
+** loaders for get data from API or database
+** Now we can see that when we click on Linked tag it will not reload the page
+*/
+
+// ! Action
+/** 
+ * ! We can use actions to handle form data to POST or PUT data to API or database
+
+** For use this we need to create an action folder where will create our action files 
+
+** Now we have to import createContact from Contacts.jsx to action.js file and create a async funtion call createContactAction at action.js file
+
+** Now we have to import createContactAction from action.js file and set it as a 'action' key value pair `action:createContactAction,`
+
+** React Router DOM will call this action when we submit the form and this from can't be html from then React Router DOM won't be able to catch its data for this React Router DOM provide us another spcial component called <Form/> at src/routes/contact.jsx
+*/
+const router = createBrowserRouter([
+	{
+		path: "/",
+		element: <Root />,
+		errorElement: <ErrorPage />,
+		loader: getContactsLoader,
+    action: createContactAction,
 		children: [
 			{
 				path: "/contacts/:contactId",
