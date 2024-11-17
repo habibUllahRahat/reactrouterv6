@@ -5,26 +5,13 @@ import {
 	RouterProvider,
 } from "react-router-dom"
 import "./index.css"
+import Root from "./routes/root"
 
 const router = createBrowserRouter([
 	//for multiple path routing we need to use array of an Object where each object represent a path
 	{
 		path: "/", //a path '/' represent which directory the elemnt or component wil be shown at browser link part
-		element: (
-			<h1>
-				Hello World, Initial Page: This will be
-				found at *domain or loaclehost*/ also known as root route
-			</h1>
-		), //Here we willl set element or component to this correspondig path
-	},
-	{
-		path: "/about",
-		element: (
-			<h1>
-				About Page, This will be found at *domain or
-				loaclehost*/about{" "}
-			</h1>
-		),
+		element: <Root />, //Here we willl set element or component to this correspondig path
 	},
 ])
 
