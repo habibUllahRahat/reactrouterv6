@@ -1,17 +1,33 @@
+import { useEffect } from "react"
 import {
 	Form,
-	Link,
+	NavLink,
 	Outlet,
 	useLoaderData,
+	useNavigation,
+	useSubmit,
 } from "react-router-dom"
 export default function Root() {
-	const {contacts} = useLoaderData()
+	const { contacts, q } = useLoaderData()
+	const navigation = useNavigation()
+	const submit = useSubmit()
+
+	const searching =
+		navigation.location &&
+		new URLSearchParams(navigation.location.search).has(
+			"query"
+		)
+
+	useEffect(() => {
+		document.getElementById("q").value = q
+	}, [q])
+
 	return (
 		<>
 			<div id='sidebar'>
 				<h1>React Router Contacts</h1>
 				<div>
-					<form
+					<Form
 						id='search-form'
 						role='search'
 					>
@@ -20,18 +36,24 @@ export default function Root() {
 							aria-label='Search contacts'
 							placeholder='Search'
 							type='search'
-							name='q'
+							name='query'
+							defaultValue={q}
+							onChange={(event) => {
+								submit(
+									event.currentTarget.form
+								)
+							}}
 						/>
 						<div
 							id='search-spinner'
 							aria-hidden
-							hidden={true}
+							hidden={!searching}
 						/>
 						<div
 							className='sr-only'
 							aria-live='polite'
 						></div>
-					</form>
+					</Form>
 					<Form method='post'>
 						<button type='submit'>New</button>
 					</Form>
@@ -41,8 +63,18 @@ export default function Root() {
 						<ul>
 							{contacts.map((contact) => (
 								<li key={contact.id}>
-									<Link
+									<NavLink
 										to={`contacts/${contact.id}`}
+										className={({
+											isActive,
+											isPending,
+										}) =>
+											isActive
+												? "active"
+												: isPending
+												? "pending"
+												: ""
+										}
 									>
 										{contact.first ||
 										contact.last ? (
@@ -60,7 +92,7 @@ export default function Root() {
 										{contact.favorite && (
 											<span>★</span>
 										)}
-									</Link>
+									</NavLink>
 								</li>
 							))}
 						</ul>
@@ -71,7 +103,14 @@ export default function Root() {
 					)}
 				</nav>
 			</div>
-			<div id='detail'>
+			<div
+				id='detail'
+				className={
+					navigation.state === "loading"
+						? "loading"
+						: ""
+				}
+			>
 				<Outlet />{" "}
 				{/* this is where the child route will be rendered */}
 			</div>

@@ -1,16 +1,12 @@
-/* eslint-disable */
-import { Form } from "react-router-dom"
+/* eslint-disable react/prop-types */
+import {
+	Form,
+	useFetcher,
+	useLoaderData,
+} from "react-router-dom"
 
 export default function Contact() {
-	const contact = {
-		first: "Your",
-		last: "Name",
-		avatar: "https://robohash.org/you.png?size=200x200",
-		twitter: "your_handle",
-		notes: "Some notes",
-		favorite: true,
-	}
-
+	const { contact } = useLoaderData()
 	return (
 		<div id='contact'>
 			<div>
@@ -76,7 +72,12 @@ export default function Contact() {
 }
 
 function Favorite({ contact }) {
-	const favorite = contact.favorite
+	//const favorite = contact.favorite;//without Optimistic UI code
+	
+	const fetcher = useFetcher()
+	const favorite = fetcher.formData
+		? fetcher.formData.get("favorite") === "true"
+		: contact.favorite
 	return (
 		<Form method='post'>
 			<button
